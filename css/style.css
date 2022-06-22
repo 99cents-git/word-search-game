@@ -9,9 +9,11 @@ h1 {
   text-transform: uppercase;
 }
 
-body {
+body, html {
   color: #333;
   overscroll-behavior: contain;
+  height: 100%;
+  font-family: 'Helvetica', 'Arial', sans-serif;
 }
 
 /* Common */
@@ -29,24 +31,18 @@ body {
 /* Home */
 
 .wrap {
-  min-width: 480px;
+  width: 100vw;
   margin: 0 auto;
   text-align: center;
   position:relative;
 }
 
-.logo, #gameArea {
-  margin-bottom: 40px;
-}
-
 .ws-area, .ws-words {
-  display: inline-block;
-  vertical-align: top;
+
 }
 
 .ws-words {
-  margin-left: 20px;
-  text-align: left;
+
 }
 
 .ws-word {

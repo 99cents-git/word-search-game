@@ -1,9 +1,17 @@
-/* Wordsearch */
+@font-face {
+  font-family: 'VAG';
+  src: url('/static/VAGRoundedBT-Regular.woff') format('woff');
+}
+
+
+.wrap {
+  background: white;
+  font-family: 'VAG';
+}
 
 .ws-area {
   background: #fafafa;
   display: inline-block;
-  padding: 20px;
   border-radius: 10px;
   -moz-user-select: -moz-none;
   -khtml-user-select: none;
@@ -25,6 +33,26 @@
 
 .ws-found {
   background: yellow;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.ws-word {
+  list-style: none;
+  padding: 3px 5px;
+  background: #eee;
+  border: 2px solid #333;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  font-size: 18px;
 }
 
 .ws-game-over-outer {

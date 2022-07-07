@@ -1,12 +1,12 @@
 @font-face {
   font-family: 'VAG';
-  src: url('/static/VAGRoundedBT-Regular.woff') format('woff');
+  src: url('/VAGRoundedBT-Regular.315e3437.woff') format('woff');
 }
 
 
 .wrap {
   font-family: 'VAG';
-  background: url("../images/spot-the-difference-bg.jpg") no-repeat;
+  background: url("/spot-the-difference-bg.4cddffed.jpg") no-repeat;
   background-size: cover;
   height: 100vh;
 }
@@ -19,7 +19,6 @@
   -khtml-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-  overflow: hidden;
 }
 
 .ws-row {
@@ -96,3 +95,6 @@ ul {
   padding:0;
   margin:0;
 }
+
+
+/*# sourceMappingURL=/wordsearch.7299fa71.css.map */

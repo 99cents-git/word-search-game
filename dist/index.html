@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Word search game</title>
+  <link rel="stylesheet" href="/wordsearch.7299fa71.css">
+  <link rel="stylesheet" href="/style.78032849.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<script src="/wordsearch.7299fa71.js"></script><script src="/style.78032849.js"></script></head>
+<body>
+<div class="wrap">
+  <ul class="ws-words"></ul>
+  <section id="ws-area"></section>
+
+</div>
+<script src="/utility.92b72114.js"></script>
+<script src="/wordsearch.67b050e4.js"></script>
+<script src="/modernizr-custom.c3903de5.js"></script>
+<script>fetch("http://99dev.co.za/ls-22/c.json").then(function (response) {
+  return response.json();
+}).then(function (data) {
+  var gameAreaEl = document.getElementById('ws-area');
+  var gameobj = gameAreaEl.wordSearch({
+    words: data['word']['wordlist'],
+    gridSize: data['word']['gridSize']
+  }); // Put words into `.ws-words`
+
+  var words = data['word']['wordlist'],
+      wordsWrap = document.querySelector('.ws-words');
+
+  for (i in words) {
+    var liEl = document.createElement('li');
+    liEl.setAttribute('class', 'ws-word');
+    liEl.innerText = words[i];
+    wordsWrap.appendChild(liEl);
+  }
+});</script>
+</body>
+</html>

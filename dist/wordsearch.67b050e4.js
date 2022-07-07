@@ -1,11 +1,129 @@
-(function () {
-  'use strict';
+// modules are defined as an array
+// [ module function, map of requires ]
+//
+// map of requires is short require name -> numeric require
+//
+// anything defined in a previous bundle is accessed via the
+// orig method which is the require for previous bundles
+parcelRequire = (function (modules, cache, entry, globalName) {
+  // Save the require from previous bundle to this closure if any
+  var previousRequire = typeof parcelRequire === 'function' && parcelRequire;
+  var nodeRequire = typeof require === 'function' && require;
 
-  // Extend the element method
-  Element.prototype.wordSearch = function (settings) {
-    return new WordSearch(this, settings);
+  function newRequire(name, jumped) {
+    if (!cache[name]) {
+      if (!modules[name]) {
+        // if we cannot find the module within our internal map or
+        // cache jump to the current global require ie. the last bundle
+        // that was added to the page.
+        var currentRequire = typeof parcelRequire === 'function' && parcelRequire;
+        if (!jumped && currentRequire) {
+          return currentRequire(name, true);
+        }
+
+        // If there are other bundles on this page the require from the
+        // previous one is saved to 'previousRequire'. Repeat this as
+        // many times as there are bundles until the module is found or
+        // we exhaust the require chain.
+        if (previousRequire) {
+          return previousRequire(name, true);
+        }
+
+        // Try the node require function if it exists.
+        if (nodeRequire && typeof name === 'string') {
+          return nodeRequire(name);
+        }
+
+        var err = new Error('Cannot find module \'' + name + '\'');
+        err.code = 'MODULE_NOT_FOUND';
+        throw err;
+      }
+
+      localRequire.resolve = resolve;
+      localRequire.cache = {};
+
+      var module = cache[name] = new newRequire.Module(name);
+
+      modules[name][0].call(module.exports, localRequire, module, module.exports, this);
+    }
+
+    return cache[name].exports;
+
+    function localRequire(x){
+      return newRequire(localRequire.resolve(x));
+    }
+
+    function resolve(x){
+      return modules[name][1][x] || x;
+    }
   }
 
+  function Module(moduleName) {
+    this.id = moduleName;
+    this.bundle = newRequire;
+    this.exports = {};
+  }
+
+  newRequire.isParcelRequire = true;
+  newRequire.Module = Module;
+  newRequire.modules = modules;
+  newRequire.cache = cache;
+  newRequire.parent = previousRequire;
+  newRequire.register = function (id, exports) {
+    modules[id] = [function (require, module) {
+      module.exports = exports;
+    }, {}];
+  };
+
+  var error;
+  for (var i = 0; i < entry.length; i++) {
+    try {
+      newRequire(entry[i]);
+    } catch (e) {
+      // Save first error but execute all entries
+      if (!error) {
+        error = e;
+      }
+    }
+  }
+
+  if (entry.length) {
+    // Expose entry point to Node, AMD or browser globals
+    // Based on https://github.com/ForbesLindesay/umd/blob/master/template.js
+    var mainExports = newRequire(entry[entry.length - 1]);
+
+    // CommonJS
+    if (typeof exports === "object" && typeof module !== "undefined") {
+      module.exports = mainExports;
+
+    // RequireJS
+    } else if (typeof define === "function" && define.amd) {
+     define(function () {
+       return mainExports;
+     });
+
+    // <script>
+    } else if (globalName) {
+      this[globalName] = mainExports;
+    }
+  }
+
+  // Override the current require with this new one
+  parcelRequire = newRequire;
+
+  if (error) {
+    // throw error from earlier, _after updating parcelRequire_
+    throw error;
+  }
+
+  return newRequire;
+})({"js/wordsearch.js":[function(require,module,exports) {
+(function () {
+  'use strict'; // Extend the element method
+
+  Element.prototype.wordSearch = function (settings) {
+    return new WordSearch(this, settings);
+  };
   /**
    * Word seach
    *
@@ -13,34 +131,39 @@
    * @param {Array} settings
    * constructor
    */
+
+
   function WordSearch(wrapEl, settings) {
+    var _this2 = this;
+
     this.wrapEl = wrapEl;
-    let _this = this;
+
+    var _this = this;
+
     if (Modernizr.touchevents) {
-      this.wrapEl.addEventListener('touchmove', (event) => {
+      this.wrapEl.addEventListener('touchmove', function (event) {
         event.preventDefault();
-        let _hoveredCanvas = document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY);
-        _this.onTouchOver(this.matrix[_hoveredCanvas.getAttribute('row')][_hoveredCanvas.getAttribute('col')])
-      })
-    }
 
-    // Add `.ws-area` to wrap element
-    this.wrapEl.classList.add('ws-area');
+        var _hoveredCanvas = document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY);
 
-    //Words solved.
-    this.solved = 0;
+        _this.onTouchOver(_this2.matrix[_hoveredCanvas.getAttribute('row')][_hoveredCanvas.getAttribute('col')]);
+      });
+    } // Add `.ws-area` to wrap element
 
-    // Default settings
+
+    this.wrapEl.classList.add('ws-area'); //Words solved.
+
+    this.solved = 0; // Default settings
+
     var default_settings = {
       'directions': ['W', 'N', 'WN', 'EN'],
       'gridSize': 10,
       'words': ['hello', 'checkers', 'minis', 'little', 'shop', 'dominic'],
       'wordsList': [],
       'debug': false
-    }
-    this.settings = Object.merge(settings, default_settings);
+    };
+    this.settings = Object.merge(settings, default_settings); // Check the words' length if it is overflow the grid
 
-    // Check the words' length if it is overflow the grid
     if (this.parseWords(this.settings.gridSize)) {
       // Add words into the matrix data
       var isWorked = false;
@@ -48,27 +171,26 @@
       while (isWorked == false) {
         // initialize the application
         this.initialize();
-
         isWorked = this.addWords();
-      }
+      } // Fill up the remaining blank items
 
-      // Fill up the remaining blank items
+
       if (!this.settings.debug) {
         this.fillUpFools();
-      }
+      } // Draw the matrix into wrap element
 
-      // Draw the matrix into wrap element
+
       this.drawmatrix();
-
-      window.parent.postMessage('ready')
+      window.parent.postMessage('ready');
     }
   }
-
   /**
    * Parse words
    * @param {Number} Max size
    * @return {Boolean}
    */
+
+
   WordSearch.prototype.parseWords = function (maxSize) {
     var itWorked = true;
 
@@ -76,8 +198,8 @@
       // Convert all the letters to upper case
       this.settings.wordsList[i] = this.settings.words[i].trim();
       this.settings.words[i] = removeDiacritics(this.settings.wordsList[i].trim().toUpperCase());
-
       var word = this.settings.words[i];
+
       if (word.length > maxSize) {
         alert('The length of word `' + word + '` is overflow the gridSize.');
         console.error('The length of word `' + word + '` is overflow the gridSize.');
@@ -86,21 +208,22 @@
     }
 
     return itWorked;
-  }
-
+  };
   /**
    * Put the words into the matrix
    */
+
+
   WordSearch.prototype.addWords = function () {
     var keepGoing = true,
-      counter = 0,
-      isWorked = true;
+        counter = 0,
+        isWorked = true;
 
     while (keepGoing) {
       // Getting random direction
       var dir = this.settings.directions[Math.rangeInt(this.settings.directions.length - 1)],
-        result = this.addWord(this.settings.words[counter], dir),
-        isWorked = true;
+          result = this.addWord(this.settings.words[counter], dir),
+          isWorked = true;
 
       if (result == false) {
         keepGoing = false;
@@ -108,49 +231,60 @@
       }
 
       counter++;
+
       if (counter >= this.settings.words.length) {
         keepGoing = false;
       }
     }
 
     return isWorked;
-  }
-
+  };
   /**
    * Add word into the matrix
    *
    * @param {String} word
    * @param {Number} direction
    */
+
+
   WordSearch.prototype.addWord = function (word, direction) {
     var itWorked = true,
-      directions = {
-        'W': [0, 1], // Horizontal (From left to right)
-        'N': [1, 0], // Vertical (From top to bottom)
-        'WN': [1, 1], // From top left to bottom right
-        'EN': [1, -1] // From top right to bottom left
-      },
-      row, col; // y, x
+        directions = {
+      'W': [0, 1],
+      // Horizontal (From left to right)
+      'N': [1, 0],
+      // Vertical (From top to bottom)
+      'WN': [1, 1],
+      // From top left to bottom right
+      'EN': [1, -1] // From top right to bottom left
+
+    },
+        row,
+        col; // y, x
 
     switch (direction) {
-      case 'W': // Horizontal (From left to right)
+      case 'W':
+        // Horizontal (From left to right)
         var row = Math.rangeInt(this.settings.gridSize - 1),
-          col = Math.rangeInt(this.settings.gridSize - word.length);
+            col = Math.rangeInt(this.settings.gridSize - word.length);
         break;
 
-      case 'N': // Vertical (From top to bottom)
+      case 'N':
+        // Vertical (From top to bottom)
         var row = Math.rangeInt(this.settings.gridSize - word.length),
-          col = Math.rangeInt(this.settings.gridSize - 1);
+            col = Math.rangeInt(this.settings.gridSize - 1);
         break;
 
-      case 'WN': // From top left to bottom right
+      case 'WN':
+        // From top left to bottom right
         var row = Math.rangeInt(this.settings.gridSize - word.length),
-          col = Math.rangeInt(this.settings.gridSize - word.length);
+            col = Math.rangeInt(this.settings.gridSize - word.length);
         break;
 
-      case 'EN': // From top right to bottom left
+      case 'EN':
+        // From top right to bottom left
         var row = Math.rangeInt(this.settings.gridSize - word.length),
-          col = Math.rangeInt(word.length - 1, this.settings.gridSize - 1);
+            col = Math.rangeInt(word.length - 1, this.settings.gridSize - 1);
         break;
 
       default:
@@ -158,14 +292,13 @@
         alert(error);
         console.log(error);
         break;
-    }
+    } // Add words to the matrix
 
-    // Add words to the matrix
+
     for (var i = 0; i < word.length; i++) {
       var newRow = row + i * directions[direction][0],
-        newCol = col + i * directions[direction][1];
+          newCol = col + i * directions[direction][1]; // The letter on the board
 
-      // The letter on the board
       var origin = this.matrix[newRow][newCol].letter;
 
       if (origin == '.' || origin == word[i]) {
@@ -176,11 +309,12 @@
     }
 
     return itWorked;
-  }
-
+  };
   /**
    * Initialize the application
    */
+
+
   WordSearch.prototype.initialize = function () {
     /**
      * Letter matrix
@@ -188,33 +322,34 @@
      * param {Array}
      */
     this.matrix = [];
-
     /**
      * Selection from
      * @Param {Object}
      */
-    this.selectFrom = null;
 
+    this.selectFrom = null;
     /**
      * Selected items
      */
+
     this.selected = [];
-
     this.initmatrix(this.settings.gridSize);
-  }
-
+  };
   /**
    * Fill default items into the matrix
    * @param {Number} size Grid size
    */
+
+
   WordSearch.prototype.initmatrix = function (size) {
     for (var row = 0; row < size; row++) {
       for (var col = 0; col < size; col++) {
         var item = {
-          letter: '.', // Default value
+          letter: '.',
+          // Default value
           row: row,
           col: col
-        }
+        };
 
         if (!this.matrix[row]) {
           this.matrix[row] = [];
@@ -223,62 +358,67 @@
         this.matrix[row][col] = item;
       }
     }
-  }
-
+  };
   /**
    * Draw the matrix
    */
+
+
   WordSearch.prototype.drawmatrix = function () {
-    let f = new FontFace('vag', 'url(VAGRoundedBT-Regular.otf)');
-    f.load().then((vag) => {
-      console.log("Loaded font")
+    var _this3 = this;
+
+    var f = new FontFace('vag', 'url(VAGRoundedBT-Regular.otf)');
+    f.load().then(function (vag) {
+      console.log("Loaded font");
       document.fonts.add(vag);
-      for (var row = 0; row < this.settings.gridSize; row++) {
+
+      for (var row = 0; row < _this3.settings.gridSize; row++) {
         // New row
         var divEl = document.createElement('div');
         divEl.setAttribute('class', 'ws-row');
-        this.wrapEl.appendChild(divEl);
 
-        for (var col = 0; col < this.settings.gridSize; col++) {
+        _this3.wrapEl.appendChild(divEl);
+
+        for (var col = 0; col < _this3.settings.gridSize; col++) {
           var cvEl = document.createElement('canvas');
           cvEl.setAttribute('class', 'ws-col');
-          cvEl.setAttribute('width', ((window.innerHeight - 60) / 10).toString())
-          cvEl.setAttribute('height', ((window.innerHeight - 60) / 10).toString())
+          cvEl.setAttribute('width', ((window.innerHeight - 60) / 10).toString());
+          cvEl.setAttribute('height', ((window.innerHeight - 60) / 10).toString());
           cvEl.setAttribute('col', col);
-          cvEl.setAttribute('row', row);
+          cvEl.setAttribute('row', row); // Fill text in middle center
 
-          // Fill text in middle center
           var x = cvEl.width / 2,
-            y = cvEl.height / 2;
-
+              y = cvEl.height / 2;
           var ctx = cvEl.getContext('2d');
           ctx.font = '400 3.5vw vag';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillStyle = '#333'; // Text color
-          ctx.fillText(this.matrix[row][col].letter, x, y);
 
-          // Add event listeners
+          ctx.fillText(_this3.matrix[row][col].letter, x, y); // Add event listeners
+
           if (Modernizr.touchevents) {
-            cvEl.addEventListener('touchstart', this.onMousedown(this.matrix[row][col]));
-            cvEl.addEventListener('touchend', this.onMouseup());
+            cvEl.addEventListener('touchstart', _this3.onMousedown(_this3.matrix[row][col]));
+            cvEl.addEventListener('touchend', _this3.onMouseup());
           } else {
-            cvEl.addEventListener('mousedown', this.onMousedown(this.matrix[row][col]));
-            cvEl.addEventListener('mouseover', this.onMouseover(this.matrix[row][col]));
-            cvEl.addEventListener('mouseup', this.onMouseup());
+            cvEl.addEventListener('mousedown', _this3.onMousedown(_this3.matrix[row][col]));
+            cvEl.addEventListener('mouseover', _this3.onMouseover(_this3.matrix[row][col]));
+            cvEl.addEventListener('mouseup', _this3.onMouseup());
           }
 
           divEl.appendChild(cvEl);
         }
       }
     });
-  }
-
+  };
   /**
    * Fill up the remaining items
    */
+
+
   WordSearch.prototype.fillUpFools = function () {
     var rangeLanguage = searchLanguage(this.settings.words[0].split('')[0]);
+
     for (var row = 0; row < this.settings.gridSize; row++) {
       for (var col = 0; col < this.settings.gridSize; col++) {
         if (this.matrix[row][col].letter == '.') {
@@ -287,8 +427,7 @@
         }
       }
     }
-  }
-
+  };
   /**
    * Returns matrix items
    * @param rowFrom
@@ -297,126 +436,130 @@
    * @param colTo
    * @return {Array}
    */
+
+
   WordSearch.prototype.getItems = function (rowFrom, colFrom, rowTo, colTo) {
     var items = [];
 
     if (rowFrom === rowTo || colFrom === colTo || Math.abs(rowTo - rowFrom) == Math.abs(colTo - colFrom)) {
-      var shiftY = (rowFrom === rowTo) ? 0 : (rowTo > rowFrom) ? 1 : -1,
-        shiftX = (colFrom === colTo) ? 0 : (colTo > colFrom) ? 1 : -1,
-        row = rowFrom,
-        col = colFrom;
-
+      var shiftY = rowFrom === rowTo ? 0 : rowTo > rowFrom ? 1 : -1,
+          shiftX = colFrom === colTo ? 0 : colTo > colFrom ? 1 : -1,
+          row = rowFrom,
+          col = colFrom;
       items.push(this.getItem(row, col));
+
       do {
         row += shiftY;
         col += shiftX;
         items.push(this.getItem(row, col));
       } while (row !== rowTo || col !== colTo);
     }
-    return items;
-  }
 
+    return items;
+  };
   /**
    * Returns matrix item
    * @param {Number} row
    * @param {Number} col
    * @return {*}
    */
-  WordSearch.prototype.getItem = function (row, col) {
-    return (this.matrix[row] ? this.matrix[row][col] : undefined);
-  }
 
+
+  WordSearch.prototype.getItem = function (row, col) {
+    return this.matrix[row] ? this.matrix[row][col] : undefined;
+  };
   /**
    * Clear the exist highlights
    */
+
+
   WordSearch.prototype.clearHighlight = function () {
     var selectedEls = document.querySelectorAll('.ws-selected');
+
     for (var i = 0; i < selectedEls.length; i++) {
       selectedEls[i].classList.remove('ws-selected');
     }
-  }
-
+  };
   /**
    * Lookup if the wordlist contains the selected
    * @param {Array} selected
    */
+
+
   WordSearch.prototype.lookup = function (selected) {
     var words = [''];
 
     for (var i = 0; i < selected.length; i++) {
       words[0] += selected[i].letter;
     }
+
     words.push(words[0].split('').reverse().join(''));
 
-    if (this.settings.words.indexOf(words[0]) > -1 ||
-      this.settings.words.indexOf(words[1]) > -1) {
+    if (this.settings.words.indexOf(words[0]) > -1 || this.settings.words.indexOf(words[1]) > -1) {
       for (var i = 0; i < selected.length; i++) {
         var row = selected[i].row + 1,
-          col = selected[i].col + 1,
-          el = document.querySelector('.ws-area .ws-row:nth-child(' + row + ') .ws-col:nth-child(' + col + ')');
-
+            col = selected[i].col + 1,
+            el = document.querySelector('.ws-area .ws-row:nth-child(' + row + ') .ws-col:nth-child(' + col + ')');
         el.classList.add('ws-found');
         el.classList.add('animate__animated');
         el.classList.add('animate__tada');
-      }
+      } //Cross word off list.
 
-      //Cross word off list.
+
       var wordList = document.querySelector(".ws-words");
       var wordListItems = wordList.getElementsByTagName("li");
+
       for (var i = 0; i < wordListItems.length; i++) {
         if (words[0] == removeDiacritics(wordListItems[i].innerHTML.toUpperCase())) {
-          if (wordListItems[i].innerHTML != "<del>" + wordListItems[i].innerHTML + "</del>") { //Check the word is never found
+          if (wordListItems[i].innerHTML != "<del>" + wordListItems[i].innerHTML + "</del>") {
+            //Check the word is never found
             wordListItems[i].innerHTML = "<del>" + wordListItems[i].innerHTML + "</del>";
-            wordListItems[i].classList.add('animate__animated')
-            wordListItems[i].classList.add('animate__rubberBand')
-            //Increment solved words.
+            wordListItems[i].classList.add('animate__animated');
+            wordListItems[i].classList.add('animate__rubberBand'); //Increment solved words.
+
             this.solved++;
           }
-
-
         }
-      }
+      } //Game over?
 
-      //Game over?
+
       if (this.solved == this.settings.words.length) {
         this.gameOver();
       }
     }
-  }
-
+  };
   /**
    * Game Over
    */
+
+
   WordSearch.prototype.gameOver = function () {
     //Create overlay.
     var overlay = document.createElement("div");
     overlay.setAttribute("id", "ws-game-over-outer");
     overlay.setAttribute("class", "ws-game-over-outer");
-    this.wrapEl.parentNode.appendChild(overlay);
+    this.wrapEl.parentNode.appendChild(overlay); //Create overlay content.
 
-    //Create overlay content.
     var overlay = document.getElementById("ws-game-over-outer");
-    overlay.innerHTML = "<div class='ws-game-over-inner' id='ws-game-over-inner'>" +
-      "<div class='ws-game-over' id='ws-game-over'>" +
-      "<h2>Congratulations!</h2>" +
-      "<p>You've found all of the words!</p>" +
-      "</div>" +
-      "</div>";
-  }
-
+    overlay.innerHTML = "<div class='ws-game-over-inner' id='ws-game-over-inner'>" + "<div class='ws-game-over' id='ws-game-over'>" + "<h2>Congratulations!</h2>" + "<p>You've found all of the words!</p>" + "</div>" + "</div>";
+  };
   /**
    * Mouse event - Mouse down
    * @param {Object} item
    */
+
+
   WordSearch.prototype.onMousedown = function (item) {
     var _this = this;
+
     return function () {
       _this.selectFrom = item;
-    }
-  }
+    };
+  };
 
   WordSearch.prototype.onTouchOver = function (item) {
     var _this = this;
+
     if (_this.selectFrom) {
       _this.selected = _this.getItems(_this.selectFrom.row, _this.selectFrom.col, item.row, item.col);
 
@@ -424,18 +567,17 @@
 
       for (var i = 0; i < _this.selected.length; i++) {
         var current = _this.selected[i],
-          row = current.row + 1,
-          col = current.col + 1,
-          el = document.querySelector('.ws-area .ws-row:nth-child(' + row + ') .ws-col:nth-child(' + col + ')');
-
+            row = current.row + 1,
+            col = current.col + 1,
+            el = document.querySelector('.ws-area .ws-row:nth-child(' + row + ') .ws-col:nth-child(' + col + ')');
         el.className += ' ws-selected';
       }
     }
-
-  }
+  };
 
   WordSearch.prototype.onMouseover = function (item) {
     var _this = this;
+
     return function () {
       if (_this.selectFrom) {
         _this.selected = _this.getItems(_this.selectFrom.row, _this.selectFrom.col, item.row, item.col);
@@ -444,33 +586,36 @@
 
         for (var i = 0; i < _this.selected.length; i++) {
           var current = _this.selected[i],
-            row = current.row + 1,
-            col = current.col + 1,
-            el = document.querySelector('.ws-area .ws-row:nth-child(' + row + ') .ws-col:nth-child(' + col + ')');
-
+              row = current.row + 1,
+              col = current.col + 1,
+              el = document.querySelector('.ws-area .ws-row:nth-child(' + row + ') .ws-col:nth-child(' + col + ')');
           el.className += ' ws-selected';
         }
       }
-    }
-  }
-
+    };
+  };
   /**
    * Mouse event - Mouse up
    */
+
+
   WordSearch.prototype.onMouseup = function () {
-
     var _this = this;
-    return function () {
-      console.log("on mouse up")
-      _this.selectFrom = null;
-      _this.clearHighlight();
-      _this.lookup(_this.selected);
-      _this.selected = [];
-    }
-  }
 
-})();
-//-----------------------------Remove accent for latin/hebrew letters---------------------------------------------------//
+    return function () {
+      console.log("on mouse up");
+      _this.selectFrom = null;
+
+      _this.clearHighlight();
+
+      _this.lookup(_this.selected);
+
+      _this.selected = [];
+    };
+  };
+})(); //-----------------------------Remove accent for latin/hebrew letters---------------------------------------------------//
+
+
 var defaultDiacriticsRemovalMap = [{
   'base': "A",
   'letters': /(&#65;|&#9398;|&#65313;|&#192;|&#193;|&#194;|&#7846;|&#7844;|&#7850;|&#7848;|&#195;|&#256;|&#258;|&#7856;|&#7854;|&#7860;|&#7858;|&#550;|&#480;|&#196;|&#478;|&#7842;|&#197;|&#506;|&#461;|&#512;|&#514;|&#7840;|&#7852;|&#7862;|&#7680;|&#260;|&#570;|&#11375;|[\u0041\u24B6\uFF21\u00C0\u00C1\u00C2\u1EA6\u1EA4\u1EAA\u1EA8\u00C3\u0100\u0102\u1EB0\u1EAE\u1EB4\u1EB2\u0226\u01E0\u00C4\u01DE\u1EA2\u00C5\u01FA\u01CD\u0200\u0202\u1EA0\u1EAC\u1EB6\u1E00\u0104\u023A\u2C6F])/g
@@ -607,45 +752,266 @@ var defaultDiacriticsRemovalMap = [{
   'base': "Z",
   'letters': /(&#90;|&#9423;|&#65338;|&#377;|&#7824;|&#379;|&#381;|&#7826;|&#7828;|&#437;|&#548;|&#11391;|&#11371;|&#42850;|[\u005A\u24CF\uFF3A\u0179\u1E90\u017B\u017D\u1E92\u1E94\u01B5\u0224\u2C7F\u2C6B\uA762])/g
 }, {
-  'base': "",	//delete Niqqud in Hebrew
+  'base': "",
+  //delete Niqqud in Hebrew
   'letters': /[\u0591-\u05C7]/g
-}]
+}];
 
 function removeDiacritics(str) {
   for (var i = 0; i < defaultDiacriticsRemovalMap.length; i++) {
     str = str.replace(defaultDiacriticsRemovalMap[i].letters, defaultDiacriticsRemovalMap[i].base);
   }
-  return str;
-}
 
-//------------------------------Search language--------------------------------------------------//
+  return str;
+} //------------------------------Search language--------------------------------------------------//
 // Determine what letters injected on grid
+
+
 function searchLanguage(firstLetter) {
   codefirstLetter = firstLetter.charCodeAt();
   var codeLetter = [65, 90];
-  if ((codefirstLetter >= 65) && (codefirstLetter <= 90)) { // Latin
+
+  if (codefirstLetter >= 65 && codefirstLetter <= 90) {
+    // Latin
     return codeLetter = [65, 90];
   }
-  if ((codefirstLetter >= 1488) && (codefirstLetter <= 1514)) { //Hebrew א -> ת
+
+  if (codefirstLetter >= 1488 && codefirstLetter <= 1514) {
+    //Hebrew א -> ת
     return codeLetter = [1488, 1514];
   }
-  if ((codefirstLetter >= 913) && (codefirstLetter <= 937)) { //Greek Α -> Ω
+
+  if (codefirstLetter >= 913 && codefirstLetter <= 937) {
+    //Greek Α -> Ω
     return codeLetter = [913, 929]; //930 is blank
   }
-  if ((codefirstLetter >= 1040) && (codefirstLetter <= 1071)) { //Cyrillic А -> Я
+
+  if (codefirstLetter >= 1040 && codefirstLetter <= 1071) {
+    //Cyrillic А -> Я
     return codeLetter = [1040, 1071]; //930 is blank
   }
-  if ((codefirstLetter >= 1569) && (codefirstLetter <= 1610)) { //Arab
+
+  if (codefirstLetter >= 1569 && codefirstLetter <= 1610) {
+    //Arab
     return codeLetter = [1569, 1594]; //Between 1595 and 1600, no letter
   }
-  if ((codefirstLetter >= 19969) && (codefirstLetter <= 40891)) { //Chinese
+
+  if (codefirstLetter >= 19969 && codefirstLetter <= 40891) {
+    //Chinese
     return codeLetter = [19969, 40891];
   }
-  if ((codefirstLetter >= 12354) && (codefirstLetter <= 12436)) { //Japan Hiragana
+
+  if (codefirstLetter >= 12354 && codefirstLetter <= 12436) {
+    //Japan Hiragana
     return codeLetter = [12388, 12418]; //Only no small letter
   }
+
   console.log("Letter not detected : " + firstLetter + ":" + codefirstLetter);
   return codeLetter;
-
-
 }
+},{}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+var global = arguments[3];
+var OVERLAY_ID = '__parcel__error__overlay__';
+var OldModule = module.bundle.Module;
+
+function Module(moduleName) {
+  OldModule.call(this, moduleName);
+  this.hot = {
+    data: module.bundle.hotData,
+    _acceptCallbacks: [],
+    _disposeCallbacks: [],
+    accept: function (fn) {
+      this._acceptCallbacks.push(fn || function () {});
+    },
+    dispose: function (fn) {
+      this._disposeCallbacks.push(fn);
+    }
+  };
+  module.bundle.hotData = null;
+}
+
+module.bundle.Module = Module;
+var checkedAssets, assetsToAccept;
+var parent = module.bundle.parent;
+
+if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
+  var hostname = "" || location.hostname;
+  var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "1548" + '/');
+
+  ws.onmessage = function (event) {
+    checkedAssets = {};
+    assetsToAccept = [];
+    var data = JSON.parse(event.data);
+
+    if (data.type === 'update') {
+      var handled = false;
+      data.assets.forEach(function (asset) {
+        if (!asset.isNew) {
+          var didAccept = hmrAcceptCheck(global.parcelRequire, asset.id);
+
+          if (didAccept) {
+            handled = true;
+          }
+        }
+      }); // Enable HMR for CSS by default.
+
+      handled = handled || data.assets.every(function (asset) {
+        return asset.type === 'css' && asset.generated.js;
+      });
+
+      if (handled) {
+        console.clear();
+        data.assets.forEach(function (asset) {
+          hmrApply(global.parcelRequire, asset);
+        });
+        assetsToAccept.forEach(function (v) {
+          hmrAcceptRun(v[0], v[1]);
+        });
+      } else if (location.reload) {
+        // `location` global exists in a web worker context but lacks `.reload()` function.
+        location.reload();
+      }
+    }
+
+    if (data.type === 'reload') {
+      ws.close();
+
+      ws.onclose = function () {
+        location.reload();
+      };
+    }
+
+    if (data.type === 'error-resolved') {
+      console.log('[parcel] ✨ Error resolved');
+      removeErrorOverlay();
+    }
+
+    if (data.type === 'error') {
+      console.error('[parcel] 🚨  ' + data.error.message + '\n' + data.error.stack);
+      removeErrorOverlay();
+      var overlay = createErrorOverlay(data);
+      document.body.appendChild(overlay);
+    }
+  };
+}
+
+function removeErrorOverlay() {
+  var overlay = document.getElementById(OVERLAY_ID);
+
+  if (overlay) {
+    overlay.remove();
+  }
+}
+
+function createErrorOverlay(data) {
+  var overlay = document.createElement('div');
+  overlay.id = OVERLAY_ID; // html encode message and stack trace
+
+  var message = document.createElement('div');
+  var stackTrace = document.createElement('pre');
+  message.innerText = data.error.message;
+  stackTrace.innerText = data.error.stack;
+  overlay.innerHTML = '<div style="background: black; font-size: 16px; color: white; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; padding: 30px; opacity: 0.85; font-family: Menlo, Consolas, monospace; z-index: 9999;">' + '<span style="background: red; padding: 2px 4px; border-radius: 2px;">ERROR</span>' + '<span style="top: 2px; margin-left: 5px; position: relative;">🚨</span>' + '<div style="font-size: 18px; font-weight: bold; margin-top: 20px;">' + message.innerHTML + '</div>' + '<pre>' + stackTrace.innerHTML + '</pre>' + '</div>';
+  return overlay;
+}
+
+function getParents(bundle, id) {
+  var modules = bundle.modules;
+
+  if (!modules) {
+    return [];
+  }
+
+  var parents = [];
+  var k, d, dep;
+
+  for (k in modules) {
+    for (d in modules[k][1]) {
+      dep = modules[k][1][d];
+
+      if (dep === id || Array.isArray(dep) && dep[dep.length - 1] === id) {
+        parents.push(k);
+      }
+    }
+  }
+
+  if (bundle.parent) {
+    parents = parents.concat(getParents(bundle.parent, id));
+  }
+
+  return parents;
+}
+
+function hmrApply(bundle, asset) {
+  var modules = bundle.modules;
+
+  if (!modules) {
+    return;
+  }
+
+  if (modules[asset.id] || !bundle.parent) {
+    var fn = new Function('require', 'module', 'exports', asset.generated.js);
+    asset.isNew = !modules[asset.id];
+    modules[asset.id] = [fn, asset.deps];
+  } else if (bundle.parent) {
+    hmrApply(bundle.parent, asset);
+  }
+}
+
+function hmrAcceptCheck(bundle, id) {
+  var modules = bundle.modules;
+
+  if (!modules) {
+    return;
+  }
+
+  if (!modules[id] && bundle.parent) {
+    return hmrAcceptCheck(bundle.parent, id);
+  }
+
+  if (checkedAssets[id]) {
+    return;
+  }
+
+  checkedAssets[id] = true;
+  var cached = bundle.cache[id];
+  assetsToAccept.push([bundle, id]);
+
+  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
+    return true;
+  }
+
+  return getParents(global.parcelRequire, id).some(function (id) {
+    return hmrAcceptCheck(global.parcelRequire, id);
+  });
+}
+
+function hmrAcceptRun(bundle, id) {
+  var cached = bundle.cache[id];
+  bundle.hotData = {};
+
+  if (cached) {
+    cached.hot.data = bundle.hotData;
+  }
+
+  if (cached && cached.hot && cached.hot._disposeCallbacks.length) {
+    cached.hot._disposeCallbacks.forEach(function (cb) {
+      cb(bundle.hotData);
+    });
+  }
+
+  delete bundle.cache[id];
+  bundle(id);
+  cached = bundle.cache[id];
+
+  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
+    cached.hot._acceptCallbacks.forEach(function (cb) {
+      cb();
+    });
+
+    return true;
+  }
+}
+},{}]},{},["../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","js/wordsearch.js"], null)
+//# sourceMappingURL=/wordsearch.67b050e4.js.map

@@ -1,0 +1,57 @@
+/* CSS reset */
+
+body, h1 {
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-transform: uppercase;
+}
+
+body, html {
+  color: #333;
+  overscroll-behavior: contain;
+  height: 100%;
+  font-family: 'Helvetica', 'Arial', sans-serif;
+}
+
+/* Common */
+
+.fix {
+  *zoom: 1;
+}
+
+.fix:after {
+  display: table;
+  clear: both;
+  content: '';
+}
+
+/* Home */
+
+.wrap {
+  width: 100vw;
+  margin: 0 auto;
+  text-align: center;
+  position:relative;
+}
+
+.ws-area, .ws-words {
+
+}
+
+.ws-words {
+
+}
+
+.ws-word {
+  margin-bottom: 4px;
+}
+
+.ws-words ::first-letter{
+	text-transform : capitalize;
+}
+
+
+/*# sourceMappingURL=/style.78032849.css.map */

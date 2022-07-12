@@ -229,49 +229,32 @@
    * Draw the matrix
    */
   WordSearch.prototype.drawmatrix = function () {
-    let f = new FontFace('vag', 'url(VAGRoundedBT-Regular.otf)');
-    f.load().then((vag) => {
-      console.log("Loaded font")
-      document.fonts.add(vag);
-      for (var row = 0; row < this.settings.gridSize; row++) {
-        // New row
-        var divEl = document.createElement('div');
-        divEl.setAttribute('class', 'ws-row');
-        this.wrapEl.appendChild(divEl);
+    for (var row = 0; row < this.settings.gridSize; row++) {
+      // New row
+      var divEl = document.createElement('div');
+      divEl.setAttribute('class', 'ws-row');
+      this.wrapEl.appendChild(divEl);
 
-        for (var col = 0; col < this.settings.gridSize; col++) {
-          var cvEl = document.createElement('canvas');
-          cvEl.setAttribute('class', 'ws-col');
-          cvEl.setAttribute('width', ((window.innerHeight - 60) / 10).toString())
-          cvEl.setAttribute('height', ((window.innerHeight - 60) / 10).toString())
-          cvEl.setAttribute('col', col);
-          cvEl.setAttribute('row', row);
+      for (var col = 0; col < this.settings.gridSize; col++) {
+        var cvEl = document.createElement('div');
+        cvEl.setAttribute('class', 'ws-col');
+        cvEl.setAttribute('col', col);
+        cvEl.setAttribute('row', row);
+        cvEl.innerText = this.matrix[row][col].letter
 
-          // Fill text in middle center
-          var x = cvEl.width / 2,
-            y = cvEl.height / 2;
-
-          var ctx = cvEl.getContext('2d');
-          ctx.font = '400 3.5vw vag';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillStyle = '#333'; // Text color
-          ctx.fillText(this.matrix[row][col].letter, x, y);
-
-          // Add event listeners
-          if (Modernizr.touchevents) {
-            cvEl.addEventListener('touchstart', this.onMousedown(this.matrix[row][col]));
-            cvEl.addEventListener('touchend', this.onMouseup());
-          } else {
-            cvEl.addEventListener('mousedown', this.onMousedown(this.matrix[row][col]));
-            cvEl.addEventListener('mouseover', this.onMouseover(this.matrix[row][col]));
-            cvEl.addEventListener('mouseup', this.onMouseup());
-          }
-
-          divEl.appendChild(cvEl);
+        // Add event listeners
+        if (Modernizr.touchevents) {
+          cvEl.addEventListener('touchstart', this.onMousedown(this.matrix[row][col]));
+          cvEl.addEventListener('touchend', this.onMouseup());
+        } else {
+          cvEl.addEventListener('mousedown', this.onMousedown(this.matrix[row][col]));
+          cvEl.addEventListener('mouseover', this.onMouseover(this.matrix[row][col]));
+          cvEl.addEventListener('mouseup', this.onMouseup());
         }
+
+        divEl.appendChild(cvEl);
       }
-    });
+    }
   }
 
   /**
@@ -361,24 +344,18 @@
       }
 
       //Cross word off list.
-      var wordList = document.querySelector(".ws-words");
-      var wordListItems = wordList.getElementsByTagName("li");
-      for (var i = 0; i < wordListItems.length; i++) {
-        if (words[0] == removeDiacritics(wordListItems[i].innerHTML.toUpperCase())) {
-          if (wordListItems[i].innerHTML != "<del>" + wordListItems[i].innerHTML + "</del>") { //Check the word is never found
-            wordListItems[i].innerHTML = "<del>" + wordListItems[i].innerHTML + "</del>";
-            wordListItems[i].classList.add('animate__animated')
-            wordListItems[i].classList.add('animate__rubberBand')
-            //Increment solved words.
-            this.solved++;
-          }
-
-
+      var wordList = document.querySelector(".word-list");
+      var wordListItems = wordList.getElementsByTagName("div");
+      for (let i = 0; i < wordListItems.length; i++) {
+        console.log(wordListItems[i].innerText, words[0]);
+        if (words[0] === wordListItems[i].innerText.toUpperCase()) {
+          wordListItems[i].classList.add('solved')
+          this.solved++;
         }
       }
 
       //Game over?
-      if (this.solved == this.settings.words.length) {
+      if (this.solved === this.settings.words.length) {
         this.gameOver();
       }
     }
@@ -388,20 +365,7 @@
    * Game Over
    */
   WordSearch.prototype.gameOver = function () {
-    //Create overlay.
-    var overlay = document.createElement("div");
-    overlay.setAttribute("id", "ws-game-over-outer");
-    overlay.setAttribute("class", "ws-game-over-outer");
-    this.wrapEl.parentNode.appendChild(overlay);
 
-    //Create overlay content.
-    var overlay = document.getElementById("ws-game-over-outer");
-    overlay.innerHTML = "<div class='ws-game-over-inner' id='ws-game-over-inner'>" +
-      "<div class='ws-game-over' id='ws-game-over'>" +
-      "<h2>Congratulations!</h2>" +
-      "<p>You've found all of the words!</p>" +
-      "</div>" +
-      "</div>";
   }
 
   /**

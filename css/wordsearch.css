@@ -1,20 +1,13 @@
-@font-face {
-  font-family: 'VAG';
-  src: url('/static/VAGRoundedBT-Regular.woff') format('woff');
-}
 
-
-.wrap {
-  font-family: 'VAG';
-  background: url("../images/spot-the-difference-bg.jpg") no-repeat;
-  background-size: cover;
-  height: 100vh;
-}
 
 .ws-area {
   background: #FAD186;
   display: inline-block;
   border-radius: 10px;
+  position: relative;
+  width: 100%;
+  z-index: 10;
+  height: 80%;
   -moz-user-select: -moz-none;
   -khtml-user-select: none;
   -webkit-user-select: none;
@@ -23,11 +16,21 @@
 }
 
 .ws-row {
-  line-height: 0;
+  height: 8.1%;
+  display: flex;
+  padding: 3px;
 }
 
 .ws-col {
   cursor: pointer;
+  width: calc(10% - 6px);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 3px;
+  background-color: white;
+  border-radius: 3px;
 }
 
 .ws-col.ws-selected {
@@ -36,6 +39,7 @@
 
 .ws-found {
   background: #B498FF;
+  color: white;
 }
 
 ul {
@@ -59,6 +63,7 @@ ul {
   border-radius: 10px;
   font-size: 3.5vw;
 }
+
 
 .ws-game-over-outer {
   background: rgba(0, 0, 0, 0.85);

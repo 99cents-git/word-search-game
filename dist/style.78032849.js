@@ -189,7 +189,7 @@ var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"_css_loader":"../../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./VAGRoundedBT-Regular.woff":[["VAGRoundedBT-Regular.fd057a48.woff","css/VAGRoundedBT-Regular.woff"],"css/VAGRoundedBT-Regular.woff"],"./..\\assets\\word-bg.jpg":[["word-bg.c3baef07.jpg","assets/word-bg.jpg"],"assets/word-bg.jpg"],"./..\\assets\\word-list-bg.png":[["word-list-bg.c6de4eab.png","assets/word-list-bg.png"],"assets/word-list-bg.png"],"./..\\assets\\button-bg.png":[["button-bg.3fdfe99c.png","assets/button-bg.png"],"assets/button-bg.png"],"./..\\assets\\button-bg-2.png":[["button-bg-2.09276063.png","assets/button-bg-2.png"],"assets/button-bg-2.png"],"_css_loader":"../../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -217,7 +217,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "1548" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "11312" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

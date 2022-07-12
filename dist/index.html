@@ -7,34 +7,120 @@
   <link rel="stylesheet" href="/wordsearch.7299fa71.css">
   <link rel="stylesheet" href="/style.78032849.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-<script src="/wordsearch.7299fa71.js"></script><script src="/style.78032849.js"></script></head>
+  <link rel="stylesheet" href="/common.76e8c8bc.css">
+  <meta name="theme-color" content="#fafafa">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/petite-vue/0.4.1/petite-vue.umd.js"></script>
+<script src="/wordsearch.7299fa71.js"></script><script src="/style.78032849.js"></script><script src="/common.76e8c8bc.js"></script></head>
 <body>
-<div class="wrap">
-  <ul class="ws-words"></ul>
-  <section id="ws-area"></section>
 
+<div class="container" id="app" v-scope="" @vue:mounted="onMounted">
+  <div id="splash" class="animate__animated" :class="screen === 'splash' ? animateIn : animateOut">
+    <div class="game-content">
+      <div class="game-bg">
+        <img src="/splash.792bc06a.png" class="responsive-img" alt="splash screen">
+        <div class="button">
+          <div class="generic-button" @click="screen = 'instructions'; showInstructions = true">
+            <div class="spot-counter-text">How to play</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="instructions" class="animate__animated" v-show="showInstructions" :class="screen === 'instructions' ? animateIn : animateOut">
+    <div class="game-content">
+      <div class="game-bg">
+        <div class="header">
+          <img src="/heading.84bf17ed.png" class="responsive-img" alt="splash screen">
+        </div>
+        <div class="bodytext">
+          <p>How to Play:
+          <ol>
+          <li>The game starts with 10 words hidden in a grid of letters.</li>
+          <li>Words are hidden vertically, horizontally and diagonally.</li>
+          <li>Find each word listed at the top.</li>
+          <li>Find a word? Tap and drag to colour it in.</li>
+          <li>The game ends when all 10 words are found.</li>
+          </ol>
+        </p></div>
+        <div class="button">
+          <div class="generic-button" @click="screen = 'game'; showGame = true">
+            <div class="spot-counter-text">Start Game</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="game" class="animate__animated" v-show="showGame" :class="screen === 'game' ? animateIn : animateOut">
+    <section id="ws-area"></section>
+    <ul class="ws-words"></ul>
+    <div style="display: flex; justify-content: space-between">
+      <div class="spot-counter" @click="screen = 'instructions'">
+        <div class="spot-counter-text">How to play</div>
+      </div>
+      <div class="word-list">
+        <div class="word-container" v-for="word in wordList">
+          {{word}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="thanks" class="animate__animated" v-show="showThanks" :class="screen === 'thanks' ? animateIn : animateOut">
+    <div class="game-content">
+      <div class="game-bg">
+        <div class="header">
+          Thanks for playing
+        </div>
+        <div class="bodytext">
+          <p>lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <p>lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <p>lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <p>lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+        <div class="button">
+          <button @click="screen = 'game'">Play again</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+<script type="module" lang="ts">
+  PetiteVue.createApp({
+    screen: 'splash',
+    itemsTotal: 0,
+    itemsFound: 0,
+    screenWidth: 0,
+    animateIn: 'animate__rollIn',
+    animateOut: 'animate__rollOut',
+    showGame: false,
+    showThanks: false,
+    showInstructions: false,
+    wordList: [],
+    onMounted() {
+      fetch("http://99dev.co.za/ls-22/c.json")
+        .then(response => response.json())
+        .then(data => {
+          let gameAreaEl = document.getElementById('ws-area');
+          this.wordList = data['word']['wordlist'];
+          let gameobj = gameAreaEl.wordSearch({words: data['word']['wordlist'], gridSize: data['word']['gridSize']});
+        })
+      window.parent.postMessage('ready')
+    },
+
+    convertScreenSpaceToPixels(percent) {
+      return this.screenWidth * percent / 100;
+    }
+
+  }).mount('#app')
+</script>
+
 <script src="/utility.92b72114.js"></script>
 <script src="/wordsearch.67b050e4.js"></script>
 <script src="/modernizr-custom.c3903de5.js"></script>
-<script>fetch("http://99dev.co.za/ls-22/c.json").then(function (response) {
-  return response.json();
-}).then(function (data) {
-  var gameAreaEl = document.getElementById('ws-area');
-  var gameobj = gameAreaEl.wordSearch({
-    words: data['word']['wordlist'],
-    gridSize: data['word']['gridSize']
-  }); // Put words into `.ws-words`
+<script type="text/javascript">
 
-  var words = data['word']['wordlist'],
-      wordsWrap = document.querySelector('.ws-words');
 
-  for (i in words) {
-    var liEl = document.createElement('li');
-    liEl.setAttribute('class', 'ws-word');
-    liEl.innerText = words[i];
-    wordsWrap.appendChild(liEl);
-  }
-});</script>
+
+
+</script>
 </body>
 </html>

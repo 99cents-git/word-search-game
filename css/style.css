@@ -1,4 +1,75 @@
-/* CSS reset */
+@font-face {
+  font-family: 'VAG';
+  src: url('./VAGRoundedBT-Regular.woff') format('woff');
+}
+
+
+.container {
+  background: url("../assets/word-bg.jpg") no-repeat;
+  background-size: contain;
+}
+
+body {
+  font-family: 'VAG', 'Arial Rounded MT Bold', sans-serif;
+  box-sizing: border-box;
+}
+
+.word-list {
+  background: url('../assets/word-list-bg.png') no-repeat;
+  background-size: contain;
+  width: 70vw;
+  height: 30vw;
+  position: absolute;
+  bottom: -10%;
+  z-index: 1;
+  right: -20%;
+  left: 28vw;
+  padding: 15px 30px;
+  box-sizing: border-box;
+
+}
+
+.word-container {
+  margin: 3px 6px;
+  display: inline-block;
+  color: white;
+  font-size: 3vw;
+  text-shadow: 0 0 4px black;
+}
+
+.word-container.solved {
+  text-decoration: line-through;
+  color: black;
+  text-shadow: none;
+}
+
+.spot-counter, .generic-button {
+
+
+  width: 30vw;
+  height: 18vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.spot-counter-text {
+  font-size: 4vw;
+  color: white;
+  text-shadow: 0 0 4px rgba(0,0,0,0.5);
+  padding-bottom: 8px;
+}
+
+.spot-counter {
+  background: url('../assets/button-bg.png') no-repeat;
+  background-size: contain;
+}
+
+.generic-button {
+  background: url('../assets/button-bg-2.png') no-repeat;
+  background-size: contain;
+}
 
 body, h1 {
   margin: 0;
@@ -13,7 +84,6 @@ body, html {
   color: #333;
   overscroll-behavior: contain;
   height: 100%;
-  font-family: 'Helvetica', 'Arial', sans-serif;
 }
 
 /* Common */

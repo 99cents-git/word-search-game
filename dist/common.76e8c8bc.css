@@ -23,7 +23,6 @@ html {
 }
 #instructions .responsive-img, #thanks .responsive-img, #game .responsive-img, #splash .responsive-img {
   width: 100%;
-  max-width: 100%;
 }
 #instructions .game-content, #thanks .game-content, #game .game-content, #splash .game-content {
   position: absolute;

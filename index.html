@@ -97,6 +97,16 @@
     showInstructions: false,
     wordList: [],
     onMounted() {
+
+      window.addEventListener("message", (event) => {
+        if (event.data === 'ws-done') {
+          setTimeout(() => {
+            this.showThanks = true;
+            this.screen = 'thanks';
+          }, 1200);
+        }
+      })
+
       fetch("http://99dev.co.za/ls-22/c.json")
         .then(response => response.json())
         .then(data => {

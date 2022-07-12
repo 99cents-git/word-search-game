@@ -347,7 +347,6 @@
       var wordList = document.querySelector(".word-list");
       var wordListItems = wordList.getElementsByTagName("div");
       for (let i = 0; i < wordListItems.length; i++) {
-        console.log(wordListItems[i].innerText, words[0]);
         if (words[0] === wordListItems[i].innerText.toUpperCase()) {
           wordListItems[i].classList.add('solved')
           this.solved++;
@@ -365,7 +364,7 @@
    * Game Over
    */
   WordSearch.prototype.gameOver = function () {
-
+    window.postMessage('ws-done')
   }
 
   /**

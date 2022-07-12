@@ -490,8 +490,6 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       var wordListItems = wordList.getElementsByTagName("div");
 
       for (var _i = 0; _i < wordListItems.length; _i++) {
-        console.log(wordListItems[_i].innerText, words[0]);
-
         if (words[0] === wordListItems[_i].innerText.toUpperCase()) {
           wordListItems[_i].classList.add('solved');
 
@@ -510,7 +508,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
    */
 
 
-  WordSearch.prototype.gameOver = function () {};
+  WordSearch.prototype.gameOver = function () {
+    window.postMessage('ws-done');
+  };
   /**
    * Mouse event - Mouse down
    * @param {Object} item
@@ -805,7 +805,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "11312" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "12135" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

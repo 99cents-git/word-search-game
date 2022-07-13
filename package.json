@@ -6,8 +6,9 @@
   "license": "",
   "author": "",
   "scripts": {
-    "build": "parcel build index.html --out-dir ../../static/word-search/  --public-url /word-search",
+    "build": "parcel build index.html --out-dir ../../static/word-search/  --public-url ./",
     "build-dev": "parcel build index.html --out-dir ../../static/word-search/  --public-url /ls-22/word-search",
+    "build-prod": "parcel build index.html --out-dir ../../static/word-search/  --public-url ./",
     "dev": "parcel index.html --open --port 8080",
     "start": "npm run build && npm run dev",
     "test": "echo \"Error: no test specified\" && exit 1"

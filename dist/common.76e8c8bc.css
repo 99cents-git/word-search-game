@@ -52,11 +52,19 @@ html {
   flex-direction: column;
   text-align: center;
 }
+#thanks .header {
+  margin-top: -8vw;
+  margin-bottom: -8vw;
+}
 #thanks .logo {
   position: absolute;
   bottom: -5%;
   right: -5%;
   width: 50%;
+}
+
+.no-pointer-events {
+  pointer-events: none;
 }
 
 .container {

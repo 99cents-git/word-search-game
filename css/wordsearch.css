@@ -8,29 +8,29 @@
   width: 100%;
   z-index: 10;
   height: 80%;
-  -moz-user-select: -moz-none;
-  -khtml-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
   overflow: hidden;
+  padding: 1%;
 }
 
 .ws-row {
   height: 8.8%;
   display: flex;
-  padding: 3px;
+  padding: 0.6% 0;
 }
 
 .ws-col {
   cursor: pointer;
-  width: calc(10% - 6px);
+  width: 8.8%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 3px;
+  margin: 0 0.6%;
   background-color: white;
   border-radius: 3px;
+  font-size: 3vw;
 }
 
 .ws-col.ws-selected {

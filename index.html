@@ -12,15 +12,21 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/petite-vue/0.4.1/petite-vue.umd.js"></script>
 </head>
 <body>
-
 <div class="container" id="app" v-scope @vue:mounted="onMounted">
   <div id="splash" class="animate__animated" :class="screen === 'splash' ? animateIn : animateOut">
     <div class="game-content">
       <div class="game-bg">
         <img src="./assets/splash.png" class="responsive-img" alt="splash screen">
-        <div class="button" >
-          <div class="generic-button" @click="screen = 'instructions'; showInstructions = true">
-            <div class="spot-counter-text">How to play</div>
+        <div style="display: flex; justify-content: space-between">
+          <div class="button">
+            <div class="generic-button" @click="screen = 'instructions'; showInstructions = true">
+              <div class="spot-counter-text">How To Play</div>
+            </div>
+          </div>
+          <div class="button">
+            <div class="generic-button" @click="restartGame">
+              <div class="spot-counter-text">Start Game</div>
+            </div>
           </div>
         </div>
       </div>
@@ -36,15 +42,15 @@
         <div class="bodytext">
           <p>How to Play:
           <ol>
-          <li>The game starts with 10 words hidden in a grid of letters.</li>
-          <li>Words are hidden vertically, horizontally and diagonally.</li>
-          <li>Find each word listed at the top.</li>
-          <li>Find a word? Tap and drag to colour it in.</li>
-          <li>The game ends when all 10 words are found.</li>
+            <li>The game starts with 10 words hidden in a grid of letters.</li>
+            <li>Words are hidden vertically, horizontally and diagonally.</li>
+            <li>Find each word listed at the top.</li>
+            <li>Find a word? Tap and drag to colour it in.</li>
+            <li>The game ends when all 10 words are found.</li>
           </ol>
         </div>
-        <div class="button" >
-          <div class="generic-button" @click="screen = 'game'; showGame = true">
+        <div class="button">
+          <div class="generic-button" @click="restartGame">
             <div class="spot-counter-text">Start Game</div>
           </div>
         </div>
@@ -53,10 +59,9 @@
   </div>
   <div id="game" class="animate__animated" v-show="showGame" :class="screen === 'game' ? animateIn : animateOut">
     <section id="ws-area"></section>
-    <ul class="ws-words"></ul>
     <div style="display: flex; justify-content: space-between">
-      <div class="spot-counter" @click="screen = 'instructions'">
-        <div class="spot-counter-text">How to play</div>
+      <div class="generic-button">
+        <div class="spot-counter-text">{{formatTime}}</div>
       </div>
       <div class="word-list">
         <div class="word-container" v-for="word in wordList">
@@ -72,11 +77,11 @@
       </div>
       <div class="bodytext">
         <p>THANKS FOR PLAYING</p>
-        <p>Your time was: 00:00</p>
+        <p>Your time was: {{formatTime}}</p>
         <p>Well Done!</p>
       </div>
       <div class="button">
-        <div class="generic-button" @click="screen = 'game'; showGame = true">
+        <div class="generic-button" @click="restartGame">
           <div class="spot-counter-text">Play Again?</div>
         </div>
       </div>
@@ -88,52 +93,79 @@
 </div>
 <script type="module" lang="ts">
   PetiteVue.createApp({
-    screen: 'thanks',
+    screen: 'splash',
     itemsTotal: 0,
     itemsFound: 0,
     screenWidth: 0,
     animateIn: 'animate__rollIn',
-    animateOut: 'animate__rollOut',
+    animateOut: 'animate__rollOut no-pointer-events',
     showGame: false,
-    showThanks: true,
+    showThanks: false,
     showInstructions: false,
+    state: {
+      gameStarted: false,
+      totalTime: 0,
+      loop: null
+    },
     wordList: [],
     onMounted() {
-
+      window.parent.postMessage('ready');
       window.addEventListener("message", (event) => {
         if (event.data === 'ws-done') {
+          clearInterval(this.state.loop);
           setTimeout(() => {
             this.showThanks = true;
             this.screen = 'thanks';
           }, 1200);
         }
       })
-
-      fetch("http://99dev.co.za/ls-22/c.json")
-        .then(response => response.json())
-        .then(data => {
-          let gameAreaEl = document.getElementById('ws-area');
-          this.wordList = data['word']['wordlist'];
-          let gameobj = gameAreaEl.wordSearch({words: data['word']['wordlist'], gridSize: data['word']['gridSize']});
-        })
-      window.parent.postMessage('ready')
     },
 
     convertScreenSpaceToPixels(percent) {
       return this.screenWidth * percent / 100;
+    },
+    get formatTime() {
+      const minutes = Math.floor(this.state.totalTime / 60)
+      const seconds = this.state.totalTime % 60
+      return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
+    },
+    restartGame() {
+      clearInterval(this.state.loop);
+
+      this.state.loop = null;
+      this.screen = 'game';
+      this.showGame = true;
+      this.state.totalTime = 0;
+      document.getElementById('ws-area').innerHTML = '';
+     let collection = document.getElementsByClassName('word-container');
+     for (let x=0; x<collection.length; x++) {
+       collection[x].classList.remove('solved');
+     }
+      fetch("http://99dev.co.za/ls-22/c.json")
+        .then(response => response.json())
+        .then(data => {
+
+          let gameAreaEl = document.getElementById('ws-area');
+          this.wordList = data['word']['wordlist'];
+          let gameobj = gameAreaEl.wordSearch({words: data['word']['wordlist'], gridSize: data['word']['gridSize']});
+          this.state.loop = setInterval(() => {
+            this.state.totalTime++;
+          }, 1000);
+
+        })
+
+    },
+    get formatTime() {
+      const minutes = Math.floor(this.state.totalTime / 60)
+      const seconds = this.state.totalTime % 60
+      return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
     }
 
   }).mount('#app')
 </script>
-
 <script src="js/utility.js"></script>
 <script src="js/wordsearch.js"></script>
 <script src="js/modernizr-custom.js"></script>
-<script type="text/javascript">
-
-
-
-
-</script>
+<script type="text/javascript"></script>
 </body>
 </html>

@@ -66,34 +66,36 @@
     </div>
   </div>
   <div id="thanks" class="animate__animated" v-show="showThanks" :class="screen === 'thanks' ? animateIn : animateOut">
-    <div class="game-content">
-      <div class="game-bg">
-        <div class="header">
-          Thanks for playing
-        </div>
-        <div class="bodytext">
-          <p>lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          <p>lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          <p>lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          <p>lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </div>
-        <div class="button">
-          <button @click="screen = 'game'">Play again</button>
+    <div class="thanks-content">
+      <div class="header">
+        <img src="./assets/thanks.png" class="responsive-img" alt="splash screen">
+      </div>
+      <div class="bodytext">
+        <p>THANKS FOR PLAYING</p>
+        <p>Your time was: 00:00</p>
+        <p>Well Done!</p>
+      </div>
+      <div class="button">
+        <div class="generic-button" @click="screen = 'game'; showGame = true">
+          <div class="spot-counter-text">Play Again?</div>
         </div>
       </div>
+    </div>
+    <div class="logo">
+      <img src="./assets/ls3-logo.png" class="responsive-img" alt="splash screen">
     </div>
   </div>
 </div>
 <script type="module" lang="ts">
   PetiteVue.createApp({
-    screen: 'splash',
+    screen: 'thanks',
     itemsTotal: 0,
     itemsFound: 0,
     screenWidth: 0,
     animateIn: 'animate__rollIn',
     animateOut: 'animate__rollOut',
     showGame: false,
-    showThanks: false,
+    showThanks: true,
     showInstructions: false,
     wordList: [],
     onMounted() {

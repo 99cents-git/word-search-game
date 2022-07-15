@@ -6,7 +6,7 @@
 
 .container {
   background: url("/word-bg.c3baef07.jpg") no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 
 body {

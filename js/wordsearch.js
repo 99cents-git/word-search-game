@@ -347,7 +347,7 @@
       var wordList = document.querySelector(".word-list");
       var wordListItems = wordList.getElementsByTagName("div");
       for (let i = 0; i < wordListItems.length; i++) {
-        if (words[0] === wordListItems[i].innerText.toUpperCase()) {
+        if (words[0] === wordListItems[i].innerText.toUpperCase() || words[0] === wordListItems[i].innerText.split('').reverse().join('').toUpperCase()) {
           wordListItems[i].classList.add('solved')
           this.solved++;
         }

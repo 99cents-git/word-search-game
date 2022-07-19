@@ -108,7 +108,7 @@
     },
     wordList: [],
     onMounted() {
-
+      window.parent.postMessage('ready');
       window.addEventListener("message", (event) => {
         if (event.data === 'ws-done') {
           clearInterval(this.state.loop);
@@ -130,6 +130,7 @@
     },
     restartGame() {
       clearInterval(this.state.loop);
+
       this.state.loop = null;
       this.screen = 'game';
       this.showGame = true;
@@ -142,13 +143,14 @@
       fetch("http://99dev.co.za/ls-22/c.json")
         .then(response => response.json())
         .then(data => {
+
           let gameAreaEl = document.getElementById('ws-area');
           this.wordList = data['word']['wordlist'];
           let gameobj = gameAreaEl.wordSearch({words: data['word']['wordlist'], gridSize: data['word']['gridSize']});
           this.state.loop = setInterval(() => {
             this.state.totalTime++;
           }, 1000);
-          window.parent.postMessage('ready')
+
         })
 
     },

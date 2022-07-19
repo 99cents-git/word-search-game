@@ -43,24 +43,6 @@ body {
   text-shadow: none;
 }
 
-.spot-counter, .generic-button {
-
-
-  width: 30vw;
-  height: 18vw;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.spot-counter-text {
-  font-size: 4vw;
-  color: white;
-  text-shadow: 0 0 4px rgba(0,0,0,0.5);
-  padding-bottom: 2vw;
-}
-
 .spot-counter {
   background: url('/button-bg.3fdfe99c.png') no-repeat;
   background-size: contain;

@@ -109,7 +109,7 @@
     },
     wordList: [],
     onMounted() {
-      window.parent.postMessage('ready');
+
       window.addEventListener("message", (event) => {
         if (event.data === 'ws-done') {
           clearInterval(this.state.loop);
@@ -166,6 +166,10 @@
 <script src="js/utility.js"></script>
 <script src="js/wordsearch.js"></script>
 <script src="js/modernizr-custom.js"></script>
-<script type="text/javascript"></script>
+<script type="text/javascript">
+  window.onload = function() {
+    window.parent.postMessage('ready');
+  }
+</script>
 </body>
 </html>

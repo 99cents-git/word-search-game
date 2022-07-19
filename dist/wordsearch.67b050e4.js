@@ -490,7 +490,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       var wordListItems = wordList.getElementsByTagName("div");
 
       for (var _i = 0; _i < wordListItems.length; _i++) {
-        if (words[0] === wordListItems[_i].innerText.toUpperCase()) {
+        if (words[0] === wordListItems[_i].innerText.toUpperCase() || words[0] === wordListItems[_i].innerText.split('').reverse().join('').toUpperCase()) {
           wordListItems[_i].classList.add('solved');
 
           this.solved++;
@@ -805,7 +805,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "12305" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "3714" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

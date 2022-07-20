@@ -108,7 +108,12 @@
     },
     wordList: [],
     onMounted() {
-      window.parent.postMessage('ready');
+      fetch("http://99dev.co.za/ls-22/c.json")
+        .then(response => response.json())
+        .then(data => {
+          this.wordList = data['word']['wordlist'];
+        });
+
       window.addEventListener("message", (event) => {
         if (event.data === 'ws-done') {
           clearInterval(this.state.loop);
@@ -140,18 +145,11 @@
      for (let x=0; x<collection.length; x++) {
        collection[x].classList.remove('solved');
      }
-      fetch("http://99dev.co.za/ls-22/c.json")
-        .then(response => response.json())
-        .then(data => {
-
-          let gameAreaEl = document.getElementById('ws-area');
-          this.wordList = data['word']['wordlist'];
-          let gameobj = gameAreaEl.wordSearch({words: data['word']['wordlist'], gridSize: data['word']['gridSize']});
-          this.state.loop = setInterval(() => {
-            this.state.totalTime++;
-          }, 1000);
-
-        })
+      let gameAreaEl = document.getElementById('ws-area');
+      let gameobj = gameAreaEl.wordSearch({words: this.wordList, gridSize: 10});
+      this.state.loop = setInterval(() => {
+        this.state.totalTime++;
+      }, 1000);
 
     },
     get formatTime() {
@@ -165,6 +163,8 @@
 <script src="/utility.92b72114.js"></script>
 <script src="/wordsearch.67b050e4.js"></script>
 <script src="/modernizr-custom.c3903de5.js"></script>
-<script type="text/javascript"></script>
+<script>window.onload = function () {
+  window.parent.postMessage('ready');
+};</script>
 </body>
 </html>

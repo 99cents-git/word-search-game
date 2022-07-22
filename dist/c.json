@@ -1,0 +1,62 @@
+{
+  "word": {
+    "wordlist": [
+      "checkers",
+      "little",
+      "shop",
+      "three",
+      "factory",
+      "mini",
+      "collect",
+      "play",
+      "share",
+      "recycle"
+    ],
+    "gridSize": 10
+  },
+  "spot": {
+    "imageA": "https://www.checkerslittleshop.co.za/minis-1A.jpg",
+    "imageB": "https://www.checkerslittleshop.co.za/minis-1B.jpg",
+    "items": [
+      {
+        "xPos": 25,
+        "yPos": 1.5,
+        "radius": 8
+      },
+      {
+        "xPos": 11,
+        "yPos": 24,
+        "radius": 8
+      },
+      {
+        "xPos": 14,
+        "yPos": 43,
+        "radius": 30
+      },
+      {
+        "xPos": 53,
+        "yPos": 59,
+        "radius": 18
+      },
+      {
+        "xPos": 53,
+        "yPos": 10,
+        "radius": 24
+      }
+    ]
+  },
+  "memory": {
+    "items": [
+      "🥔",
+      "🍒",
+      "🥑",
+      "🌽",
+      "🥕",
+      "🍇",
+      "🍉",
+      "🍌",
+      "🥭",
+      "🍍"
+    ]
+  }
+}

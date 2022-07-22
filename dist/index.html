@@ -20,7 +20,7 @@
         <div style="display: flex; justify-content: space-between">
           <div class="button">
             <div class="generic-button" @click="screen = 'instructions'; showInstructions = true">
-              <div class="spot-counter-text">How To Play</div>
+              <div class="spot-counter-text">How to Play</div>
             </div>
           </div>
           <div class="button">
@@ -44,8 +44,8 @@
             <li>The game starts with 10 words hidden in a grid of letters.</li>
             <li>Words are hidden vertically, horizontally and diagonally.</li>
             <li>Find each word listed at the top.</li>
-            <li>Find a word? Tap and drag to colour it in.</li>
-            <li>The game ends when all 10 words are found.</li>
+            <li>Found a word? Tap and drag to colour it in.</li>
+            <li>The game ends when all 10 words have been found.</li>
           </ol>
         </p></div>
         <div class="button">
@@ -108,10 +108,10 @@
     },
     wordList: [],
     onMounted() {
-      fetch("http://99dev.co.za/ls-22/c.json")
+      fetch("https://jgnyb3xew6.execute-api.af-south-1.amazonaws.com/latest/word")
         .then(response => response.json())
         .then(data => {
-          this.wordList = data['word']['wordlist'];
+          this.wordList = data['wordlist'];
         });
 
       window.addEventListener("message", (event) => {
